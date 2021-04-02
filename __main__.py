@@ -35,7 +35,8 @@ def eks_role_policy(oidc_provider, namespace, service_account):
         }
     ).apply(json.dumps)
 
-cluster = eks.Cluster("pulumi-bug", name="pulumi-bug", create_oidc_provider=True,)
+cluster_name = "pulumi-bug"
+cluster = eks.Cluster("pulumi-bug", name=cluster_name, create_oidc_provider=True,)
 
 base_name = f"pulumi-bug-aws-load-balancer-controller"
 
@@ -66,7 +67,7 @@ k8s.helm.v3.Chart(
         namespace="default",
         fetch_opts=k8s.helm.v3.FetchOpts(repo="https://aws.github.io/eks-charts"),
         values={
-            "clusterName": cluster.name,
+            "clusterName": cluster_name,
             "serviceAccount": {
                 "annotations": {
                     "eks.amazonaws.com/role-arn": role.arn,
